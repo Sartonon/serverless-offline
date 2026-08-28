@@ -20,7 +20,7 @@ const fs = require("node:fs")
 const process = require("node:process")
 
 const { require: tsxRequire } = require(`tsx/cjs/api`)
-const { tsImport } = require(`tsx/esm/api`)
+const { register } = require(`tsx/esm/api`)
 const {
   HandlerNotFound,
   MalformedHandlerName,
@@ -43,6 +43,8 @@ const STREAM_RESPONSE = "response"
 const NoGlobalAwsLambda =
   process.env.AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA === "1" ||
   process.env.AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA === "true"
+
+register()
 
 /**
  * Break the full handler string into two pieces, the module root and the actual
@@ -183,7 +185,10 @@ async function _tryRequire(appRoot, moduleRoot, module) {
     (await _tryAwaitImport(lambdaStylePath, ".mjs")) ||
     _tryRequireFile(lambdaStylePath, ".cjs") ||
     (pjHasModule &&
-      (await tsImport(`${lambdaStylePath}.ts`, `${lambdaStylePath}.ts`))) ||
+      (await _tryAwaitImport(
+        `${lambdaStylePath}.ts`,
+        `${lambdaStylePath}.ts`,
+      ))) ||
     tsxRequire(`${lambdaStylePath}.ts`, `${lambdaStylePath}.ts`)
   if (loaded) {
     return loaded
