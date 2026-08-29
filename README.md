@@ -1,4 +1,10 @@
+
+
 # Serverless Offline
+
+This is a fork of [dherault/serverless-offline](https://github.com/dherault/serverless-offline).
+
+Adds ESM module caching to reduce memory usage and improve performance.
 
 <div align="center">
   <sup>
